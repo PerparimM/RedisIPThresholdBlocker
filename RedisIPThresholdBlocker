@@ -1,0 +1,21 @@
+import redis
+
+# connect to Redis
+r = redis.Redis(host='localhost', port=6379, db=0)
+
+# define the threshold for the number of packages
+THRESHOLD = 1000
+
+while True:
+# get the IP address of the incoming package
+ip_address = get_ip_address()
+
+# increment the counter for this IP address
+r.incr(ip_address)
+
+# check if the counter for this IP address has exceeded the threshold
+if r.get(ip_address) > THRESHOLD:
+# block this IP address
+block_ip_address(ip_address)
+# reset the counter for this IP address
+r.set(ip_address, 0)
